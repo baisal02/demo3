@@ -176,31 +176,24 @@ public class PostServiceImpl implements PostService {
 
         User userToTag = userRepo.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User to tag not found"));
-
+        if(me.getPosts() != null) {
         for (Post post : me.getPosts()) {
-            if (post.getId().equals(postId)) {
+            if (post.getId()==postId) {
+                if(post.getImages() != null) {
                 for (Image image : post.getImages()) {
-                    if (image.getId().equals(imageId)) {
+                    if (image.getId()==imageId) {
 
-                        // Allow tagging regardless of existing tags
-                        if (image.getUser() != null) {
-                            // If the image is already tagged, remove the old tag
-                            image.setUser(null);
-                        }
-
-                        // Tag the new user
-                        if (userToTag.getImage()!= null) {
                             userToTag.setImage(image);
-                            userRepo.save(userToTag);
                             image.setUser(userToTag);
-                            imageRepo.save(image);
+
                             userRepo.save(userToTag);
+
+                            return new SimpleResponse("The User has been tagged", HttpStatus.OK);
                         }
 
-                        imageRepo.save(image); // Save the image
-
-                        return new SimpleResponse("The User has been tagged", HttpStatus.OK);
+                        return new SimpleResponse("Tagging not possible", HttpStatus.BAD_REQUEST);
                     }
+                }
                 }
                 return new SimpleResponse("Image not found in the post", HttpStatus.BAD_REQUEST);
             }

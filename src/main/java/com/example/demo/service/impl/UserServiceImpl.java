@@ -44,11 +44,11 @@ public class UserServiceImpl implements UserService {
         List<User>allUsers = userRepo.findAll();
         for (User user : allUsers) {
             if(user.ownGetName()==userRegister.getNickname()){
-             throw  new UserExistException("Nickname already exists");
+                throw  new UserExistException("Nickname already exists");
             }
         } for (User user : allUsers) {
             if(user.getEmail()==userRegister.getEmail()){
-             throw  new UserExistException("email already exists");
+                throw  new UserExistException("email already exists");
             }
         }
         String fullname = userRegister.getFirstame()+" "+userRegister.getSurname();
@@ -61,15 +61,12 @@ public class UserServiceImpl implements UserService {
         followerRepo.save(follower);
         //------------
 
-
         User user = new User();
-
         user.setUsername(userRegister.getNickname());
         user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         user.setEmail(userRegister.getEmail());
         user.setPhoneNumber(userRegister.getPhonenumber());
         userRepo.save(user);
-
 
         UserInfo userInfo = new UserInfo();
         userInfo.setFullName(fullname);
@@ -118,10 +115,20 @@ public class UserServiceImpl implements UserService {
                    .toList();
 
            for(Post post:posts){
+               List<ImageResponse>imageResponses = new ArrayList<>();
+               if(post.getImages()!=null){
+                   for (Image image : post.getImages()) {
+                       imageResponses.add(new ImageResponse(
+                               image.getId(),
+                               image.getImageUrl()
+                       ));
+                   }
+               }
                postResponses.add(new PostResponse(
                        post.getId(),
                        post.getTitle(),
                        post.getDescription(),
+                       imageResponses,
                        post.getCreatedAt()
                ));
            }
@@ -163,10 +170,20 @@ public class UserServiceImpl implements UserService {
                     .toList();
 
             for(Post post:posts){
+                List<ImageResponse>imageResponses = new ArrayList<>();
+                if(post.getImages()!=null){
+                    for (Image image : post.getImages()) {
+                        imageResponses.add(new ImageResponse(
+                                image.getId(),
+                                image.getImageUrl()
+                        ));
+                    }
+                }
                 postResponses.add(new PostResponse(
                         post.getId(),
                         post.getTitle(),
                         post.getDescription(),
+                        imageResponses,
                         post.getCreatedAt()
                 ));
             }
@@ -225,10 +242,21 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
-
         }
 
 
+        if(currentUser.getPosts()!=null){
+            for(Post post:currentUser.getPosts()){
+                if(post.getImages()!=null){
+                    for (Image image:post.getImages()){
+                        if(image.getUser()!=null){
+                            image.getUser().setImage(null);
+                            image.setUser(null);
+                        }
+                    }
+                }
+            }
+        }
 
 
         if(currentUser.getPosts()!=null){

@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 public class ImageResponse {
     private Long id;
+    private String imageUrl;
 
     public Long getId() {
         return id;
@@ -16,7 +17,7 @@ public class ImageResponse {
         this.imageUrl = imageUrl;
     }
 
-    private String imageUrl;
+
 
     public ImageResponse() {
     }

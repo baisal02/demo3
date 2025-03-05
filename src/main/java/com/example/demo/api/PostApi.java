@@ -33,7 +33,7 @@ public class PostApi {
         return postService.getPost(postId);
     }
 
-    @GetMapping
+    @GetMapping("/getOwnSubscriptionPosts")
     public List<PostResponse> getOwnPostAndSubscriptionsPost(){
         return postService.getOwnPostAndSubscriptionsPost();
     }
