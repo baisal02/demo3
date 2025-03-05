@@ -178,11 +178,14 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new UsernameNotFoundException("User to tag not found"));
         if(me.getPosts() != null) {
         for (Post post : me.getPosts()) {
-            if (post.getId()==postId) {
+            if (post.getId().equals(postId)) {
                 if(post.getImages() != null) {
                 for (Image image : post.getImages()) {
-                    if (image.getId()==imageId) {
+                    if (image.getId().equals(imageId)) {
 
+                        if(image.getUser() != null) {
+                            return new SimpleResponse("this image already has User , you can't tag another User", HttpStatus.BAD_REQUEST);
+                        }
                             userToTag.setImage(image);
                             image.setUser(userToTag);
 
@@ -195,10 +198,11 @@ public class PostServiceImpl implements PostService {
                     }
                 }
                 }
-                return new SimpleResponse("Image not found in the post", HttpStatus.BAD_REQUEST);
             }
         }
-        return new SimpleResponse("Post not found for the current user", HttpStatus.BAD_REQUEST);
+
+
+        return new SimpleResponse("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
 }

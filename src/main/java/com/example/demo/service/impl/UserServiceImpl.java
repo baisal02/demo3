@@ -227,6 +227,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SimpleResponse deleteUser() {
+
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepo.findUserByEmail(currentUserEmail).orElseThrow(()->new MyNotFoundException("User not found"));
 
@@ -235,6 +236,13 @@ public class UserServiceImpl implements UserService {
             for(Post post:currentUser.getPosts()){
                 if(post.getComments()!=null){
                     for(Comment comment:post.getComments()){
+                        if(comment.getLikes()!=null){
+                            for(Like like:comment.getLikes()){
+                                like.getUser().getLikes().remove(like);
+                                like.setUser(null);
+                            }
+                        }
+
                         if(comment.getUser()!=null){
                             comment.getUser().getComments().remove(comment);
                             comment.setUser(null);
